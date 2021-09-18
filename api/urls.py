@@ -11,6 +11,7 @@ urlpatterns = [
     path('portfolios/<int:pk>/', PortfolioDetailView.as_view()),
     path('images/', ImageView.as_view()),
     path('images/my/', MyImageView.as_view()),
+    path('images/<int:pk>/', ImageDetailView.as_view()),
     path('token/', TokenObtainPairView.as_view()),
     path('token/refresh/', TokenRefreshView.as_view()),
 ]

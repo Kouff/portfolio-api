@@ -3,7 +3,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
 from api.models import *
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsOwnerOrReadOnly, IsOwnerForImageOrReadOnly
 from api.serializers import *
 
 
@@ -77,3 +77,15 @@ class MyImageView(ListAPIView):
 
     def get_queryset(self):
         return Image.objects.select_related('portfolio').filter(portfolio__owner=self.request.user)
+
+
+class ImageDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    get: Show a image with comments.
+    patch: Edit a image (for the image owner only).
+    delete: Delete a image (for the image owner only).
+    """
+    queryset = Image.objects.select_related('portfolio').prefetch_related('comments__author').all()
+    serializer_class = ImageDetailSerializer
+    http_method_names = ['get', 'patch', 'delete']
+    permission_classes = (IsAuthenticated, IsOwnerForImageOrReadOnly)

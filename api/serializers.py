@@ -119,4 +119,24 @@ class PortfolioDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Portfolio
         fields = ('id', 'name', 'description', 'owner', 'images')
-        read_only_fields = ('id', 'owner', 'images')
+        read_only_fields = ('id',)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """ Serializer for showing a comment """
+    author = UserSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'text', 'author', 'creation_date')
+
+
+class ImageDetailSerializer(serializers.ModelSerializer):
+    """ Serializer for showing and editing an image """
+    portfolio = PortfolioSimpleSerializer(read_only=True)
+    comments = CommentSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Image
+        fields = ('id', 'name', 'description', 'image', 'portfolio', 'comments')
+        read_only_fields = ('id',)
