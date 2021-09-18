@@ -24,14 +24,14 @@ Run the server:
 
 OpenAPI (Swagger): http://127.0.0.1:8000/swagger/
 
-###Comments:
+### Comments:
 POST /comments/ - Create a new comment;
 
 PATCH /comments/{id}/ - Edit a comment (for the comment author only);
 
 DELETE /comments/{id}/ - Delete a comment (for the comment author only).
 
-###Images:
+### Images:
 GET /images/ - Show all the images;
 
 POST /images/ - Create a new image;
@@ -44,7 +44,7 @@ PATCH /images/{id}/ - Edit an image (for the image owner only);
 
 DELETE /images/{id}/ - Delete an image (for the image owner only).
 
-###Portfolios:
+### Portfolios:
 GET /portfolios/ - Show all the portfolios;
 
 POST /portfolios/ - Create a new portfolio;
@@ -57,15 +57,15 @@ PATCH /portfolios/{id}/ - Edit a portfolio (for the portfolio owner only);
 
 DELETE /portfolios/{id}/ - Delete a portfolio (for the portfolio owner only).
 
-###Registration:
+### Registration:
 POST /registration/ - Registration / Create a new user.
 
-###Token:
+### Token:
 POST /token/ - Get JWT (access and refresh tokens);
 
 POST /token/refresh/ - Refresh access token.
 
-###Users:
+### Users:
 GET /users/me/ - Show the current user;
 
 PATCH /users/me/ - Edit the current user;
