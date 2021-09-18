@@ -8,6 +8,7 @@ urlpatterns = [
     path('users/me/', UserMeView.as_view()),
     path('portfolios/', PortfolioView.as_view()),
     path('portfolios/my/', MyPortfolioView.as_view()),
+    path('portfolios/<int:pk>/', PortfolioDetailView.as_view()),
     path('images/', ImageView.as_view()),
     path('images/my/', MyImageView.as_view()),
     path('token/', TokenObtainPairView.as_view()),

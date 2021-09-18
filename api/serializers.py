@@ -100,3 +100,23 @@ class ImageSerializer(serializers.ModelSerializer):
         ).exists():
             return value
         raise serializers.ValidationError('The portfolio you created with this id was not found.')
+
+
+class ImageSimpleSerializer(serializers.ModelSerializer):
+    """ Serializer for showing images in other serializers """
+
+    class Meta:
+        model = Image
+        fields = ('id', 'name', 'description', 'image')
+        read_only_fields = ('id',)
+
+
+class PortfolioDetailSerializer(serializers.ModelSerializer):
+    """ Serializer for showing and editing a portfolio """
+    owner = UserSimpleSerializer(read_only=True)
+    images = ImageSimpleSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Portfolio
+        fields = ('id', 'name', 'description', 'owner', 'images')
+        read_only_fields = ('id', 'owner', 'images')
