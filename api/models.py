@@ -22,4 +22,5 @@ class Image(models.Model):
 class Comment(models.Model):
     text = models.TextField()
     image = models.ForeignKey(Image, related_name='comments', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='comments', on_delete=models.DO_NOTHING)
     creation_date = models.DateTimeField(auto_now_add=True)
