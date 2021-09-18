@@ -1,3 +1,4 @@
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
@@ -67,6 +68,8 @@ class ImageView(ListCreateAPIView):
     parser_classes = (MultiPartParser,)  # for sending image in swagger
     queryset = Image.objects.select_related('portfolio').all()
     serializer_class = ImageSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ('name', 'description', 'portfolio__name')
 
 
 class MyImageView(ListAPIView):
