@@ -1,5 +1,6 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
+from api.models import *
 from api.serializers import *
 
 
@@ -16,3 +17,15 @@ class UserMeView(RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class PortfolioView(ListCreateAPIView):
+    queryset = Portfolio.objects.select_related('owner').all()
+    serializer_class = PortfolioSerializer
+
+
+class MyPortfolioView(ListAPIView):
+    serializer_class = PortfolioSerializer
+
+    def get_queryset(self):
+        return self.request.user.portfolios.select_related('owner').all()

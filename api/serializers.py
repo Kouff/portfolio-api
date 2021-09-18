@@ -3,10 +3,12 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from api import helpers
+from api.models import *
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
     """ Serializer for creating a new user """
+
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email', 'username', 'password')
@@ -25,8 +27,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
-class UserMeSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     """ Serializer for showing and editing the current user """
+
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email', 'username', 'password')
@@ -47,3 +50,25 @@ class UserMeSerializer(serializers.ModelSerializer):
             validated_data['password'] = make_password(password)
         return super().update(instance, validated_data)
 
+
+class UserSimpleSerializer(serializers.ModelSerializer):
+    """ Serializer for showing users in other serializers """
+
+    class Meta:
+        ref_name = None  # for read only in swagger
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'username')
+
+
+class PortfolioSerializer(serializers.ModelSerializer):
+    """ Serializer for showing and creating a portfolio """
+    owner = UserSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Portfolio
+        fields = ('id', 'name', 'description', 'owner')
+        read_only_fields = ('id', 'owner')
+
+    def create(self, validated_data):
+        validated_data['owner'] = self.context['request'].user
+        return super().create(validated_data)
