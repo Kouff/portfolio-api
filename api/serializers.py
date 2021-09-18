@@ -72,3 +72,31 @@ class PortfolioSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class PortfolioSimpleSerializer(serializers.ModelSerializer):
+    """ Serializer for showing portfolios in other serializers """
+
+    class Meta:
+        ref_name = None  # for read only in swagger
+        model = Portfolio
+        fields = ('id', 'name')
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    """ Serializer for showing and creating a portfolio """
+    portfolio = PortfolioSimpleSerializer(read_only=True)
+    portfolio_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Image
+        fields = ('id', 'name', 'description', 'portfolio_id', 'image', 'portfolio')
+        read_only_fields = ('id', 'portfolio')
+
+    def validate_portfolio_id(self, value):
+        if value > 0 and Portfolio.objects.filter(
+                pk=value,
+                owner=self.context['request'].user
+        ).exists():
+            return value
+        raise serializers.ValidationError('The portfolio you created with this id was not found.')

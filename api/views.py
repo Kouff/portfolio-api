@@ -1,4 +1,5 @@
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.parsers import MultiPartParser
 
 from api.models import *
 from api.serializers import *
@@ -29,3 +30,16 @@ class MyPortfolioView(ListAPIView):
 
     def get_queryset(self):
         return self.request.user.portfolios.select_related('owner').all()
+
+
+class ImageView(ListCreateAPIView):
+    parser_classes = (MultiPartParser,)  # for sending image in swagger
+    queryset = Image.objects.select_related('portfolio').all()
+    serializer_class = ImageSerializer
+
+
+class MyImageView(ListAPIView):
+    serializer_class = ImageSerializer
+
+    def get_queryset(self):
+        return Image.objects.select_related('portfolio').filter(portfolio__owner=self.request.user)
