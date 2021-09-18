@@ -18,9 +18,27 @@ and [activate](https://virtualenv.pypa.io/en/latest/user_guide.html#activators) 
 
     $ pip install -r requirements.txt
 
-Run the server:
+Add virtual environments:
+
+    $ export DJANGO_SECRET_KEY={secret} \
+      DJANGO_DEBUG={true|false} \
+      DB_NAME={name} \
+      DB_USER={user} \
+      DB_PASSWORD={password} \
+      DB_HOST={host} \
+      DB_PORT={port}
+
+Migrate:
+
+    $ python manage.py migrate
+
+Run the server (gunicorn does not work on Windows OS):
 
     $ gunicorn settings.wsgi
+
+Run the server on Windows OS (for testing):
+
+    $ python manage.py runserver
 
 OpenAPI (Swagger): http://127.0.0.1:8000/swagger/
 
