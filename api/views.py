@@ -3,15 +3,15 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
 from api.models import *
-from api.permissions import IsOwnerOrReadOnly, IsOwnerForImageOrReadOnly
+from api.permissions import IsOwnerOrReadOnly, IsOwnerForImageOrReadOnly, IsAuthorOrReadOnly
 from api.serializers import *
 
 
 class UserCreateView(CreateAPIView):
     """
-    get: Registration / Create a new user.
+    post: Registration / Create a new user.
     """
-    serializer_class = CreateUserSerializer
+    serializer_class = UserCreateSerializer
     permission_classes = ()
 
 
@@ -21,7 +21,7 @@ class UserMeView(RetrieveUpdateDestroyAPIView):
     patch: Edit the current user.
     delete: Delete the current user.
     """
-    serializer_class = CreateUserSerializer
+    serializer_class = UserCreateSerializer
     http_method_names = ['get', 'patch', 'delete']
 
     def get_object(self):
@@ -89,3 +89,21 @@ class ImageDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = ImageDetailSerializer
     http_method_names = ['get', 'patch', 'delete']
     permission_classes = (IsAuthenticated, IsOwnerForImageOrReadOnly)
+
+
+class CommentCreateView(CreateAPIView):
+    """
+    post: Create a new comment.
+    """
+    serializer_class = CommentCreateSerializer
+
+
+class CommentView(RetrieveUpdateDestroyAPIView):
+    """
+    patch: Edit a comment (for the comment author only).
+    delete: Delete a comment (for the comment author only).
+    """
+    queryset = Comment.objects.select_related('author').all()
+    serializer_class = CommentSerializer
+    http_method_names = ['patch', 'delete']
+    permission_classes = (IsAuthenticated, IsAuthorOrReadOnly)

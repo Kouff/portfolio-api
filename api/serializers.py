@@ -6,7 +6,7 @@ from api import helpers
 from api.models import *
 
 
-class CreateUserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     """ Serializer for creating a new user """
 
     class Meta:
@@ -118,25 +118,45 @@ class PortfolioDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Portfolio
-        fields = ('id', 'name', 'description', 'owner', 'images')
+        fields = ('id', 'name', 'description', 'creation_date', 'owner', 'images')
         read_only_fields = ('id',)
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    """ Serializer for showing a comment """
+class CommentCreateSerializer(serializers.ModelSerializer):
+    """ Serializer for showing and creating a comment """
     author = UserSimpleSerializer(read_only=True)
+    image_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Comment
-        fields = ('id', 'text', 'author', 'creation_date')
+        fields = ('id', 'text', 'creation_date', 'author', 'image_id')
+        read_only_fields = ('id',)
+
+    def validate_image_id(self, value):
+        if value > 0 and Image.objects.filter(pk=value).exists():
+            return value
+        raise serializers.ValidationError('The image with this id was not found.')
+
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """ Serializer for showing and creating a comment """
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'text')
+        read_only_fields = ('id',)
 
 
 class ImageDetailSerializer(serializers.ModelSerializer):
     """ Serializer for showing and editing an image """
     portfolio = PortfolioSimpleSerializer(read_only=True)
-    comments = CommentSerializer(read_only=True, many=True)
+    comments = CommentCreateSerializer(read_only=True, many=True)
 
     class Meta:
         model = Image
-        fields = ('id', 'name', 'description', 'image', 'portfolio', 'comments')
+        fields = ('id', 'name', 'description', 'image', 'creation_date', 'portfolio', 'comments')
         read_only_fields = ('id',)
