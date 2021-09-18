@@ -84,9 +84,9 @@ class MyImageView(ListAPIView):
 
 class ImageDetailView(RetrieveUpdateDestroyAPIView):
     """
-    get: Show a image with comments.
-    patch: Edit a image (for the image owner only).
-    delete: Delete a image (for the image owner only).
+    get: Show an image with comments.
+    patch: Edit an image (for the image owner only).
+    delete: Delete an image (for the image owner only).
     """
     queryset = Image.objects.select_related('portfolio').prefetch_related('comments__author').all()
     serializer_class = ImageDetailSerializer
